@@ -1,5 +1,7 @@
 package br.task.task.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,5 +29,10 @@ public class TaskController {
 
         return task;
 
+    }
+
+    @GetMapping("/tasks")
+    public List<Task> getAllTasks(){
+        return service.getAllTasks();
     }
 }

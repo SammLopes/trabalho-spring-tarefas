@@ -1,5 +1,7 @@
 package br.task.task.services;
 
+import java.util.List;
+import org.springframework.data.domain.Sort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,4 +24,7 @@ public class TaskService {
         return null;
     }
     
+    public List<Task> getAllTasks(){
+        return this.repository.findAll(Sort.by(Sort.Direction.ASC));
+    }
 }
