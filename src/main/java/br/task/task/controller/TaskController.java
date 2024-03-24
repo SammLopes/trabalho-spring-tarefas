@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,5 +56,10 @@ public class TaskController {
     @PutMapping("/tasks/{id}")
     public Task updateTask(@PathVariable Long id, @RequestParam Task newTask){
         return this.service.updateTask(id, newTask);
+    }
+
+    @DeleteMapping("tasks/{id}")
+    public Task deleteTask(@PathVariable Long id){
+        return this.deleteTask(id);
     }
 }
