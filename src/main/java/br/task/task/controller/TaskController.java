@@ -3,14 +3,18 @@ package br.task.task.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.task.task.model.Task;
 import br.task.task.services.TaskService;
 
+@CrossOrigin 
 @RestController
 @RequestMapping("gravar/tarefas")
 public class TaskController {
@@ -34,5 +38,16 @@ public class TaskController {
     @GetMapping("/tasks")
     public List<Task> getAllTasks(){
         return service.getAllTasks();
+    }
+
+    @PostMapping("/task")
+    public Task createTask(@RequestParam Task createTask){
+        Task t = this.service.createTask(createTask);
+        
+        if(t == null){
+            return null;
+        }
+
+        return t;
     }
 }

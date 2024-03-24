@@ -27,4 +27,14 @@ public class TaskService {
     public List<Task> getAllTasks(){
         return this.repository.findAll(Sort.by(Sort.Direction.ASC));
     }
+
+    public Task createTask(Task task){
+        Task t = this.repository.save(task);
+        
+        if(t != null){
+            return t;
+        }
+
+        return null;
+    }
 }
