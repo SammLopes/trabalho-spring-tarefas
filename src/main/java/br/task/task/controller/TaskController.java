@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,7 +44,12 @@ public class TaskController {
     }
 
     @PostMapping("/task")
-    public Task createTask(@RequestParam Task createTask){
+    public Task createTask(/**@RequestParam Task createTask*/@RequestParam String title, @RequestParam String description, @RequestParam(required = false, defaultValue = "false") Boolean completed){
+        Task createTask = new Task();
+        createTask.setTitle(title);
+        createTask.setDescription(description);
+        createTask.setCompleted(completed);
+        
         Task t = this.service.createTask(createTask);
         
         if(t == null){
@@ -53,13 +59,26 @@ public class TaskController {
         return t;
     }
 
-    @PutMapping("/tasks/{id}")
-    public Task updateTask(@PathVariable Long id, @RequestParam Task newTask){
-        return this.service.updateTask(id, newTask);
+    @PutMapping("/task/{id}")
+    public Task updateTask(@PathVariable Long id, /**@RequestBody Task newTask*/@RequestParam String title, @RequestParam String description, @RequestParam(required = false, defaultValue = "false") Boolean completed){
+        
+        if(this.getTaskById(id) != null){
+            //return this.getTaskById(id);
+            
+            Task newTask = new Task();
+            newTask.setId(id);
+            newTask.setTitle(title);
+            newTask.setDescription(description);
+            newTask.setCompleted(completed);
+            return this.service.updateTask(id, newTask);
+        
+        }
+
+        return null;
     }
 
-    @DeleteMapping("tasks/{id}")
+    @DeleteMapping("task/{id}")
     public Task deleteTask(@PathVariable Long id){
-        return this.deleteTask(id);
+        return this.service.deleteTask(id);
     }
 }
