@@ -1,6 +1,6 @@
 package br.task.task.model;
 
-import java.util.function.LongFunction;
+
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
