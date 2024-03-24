@@ -25,7 +25,7 @@ public class TaskService {
     }
     
     public List<Task> getAllTasks(){
-        return this.repository.findAll(Sort.by(Sort.Direction.ASC));
+        return this.repository.findAll(Sort.by("title").ascending().and(Sort.by("description").descending()));
     }
 
     public Task createTask(Task task){
@@ -40,11 +40,7 @@ public class TaskService {
 
     public Task updateTask(Long id , Task task){
 
-        if(this.getTaskById(id) == null){
-            return null;
-        }
-
-        return this.createTask(task);
+        return this.repository.save(task);
     }
 
     public Task deleteTask(Long id){
