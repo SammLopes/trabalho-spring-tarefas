@@ -37,4 +37,13 @@ public class TaskService {
 
         return null;
     }
+
+    public Task updateTask(Long id , Task task){
+
+        if(this.getTaskById(id) == null){
+            return null;
+        }
+
+        return this.createTask(task);
+    }
 }
