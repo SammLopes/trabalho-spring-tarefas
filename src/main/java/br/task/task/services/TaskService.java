@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.task.task.model.Task;
 import br.task.task.repository.TaskRepository;
+import java.util.Optional;
 
 /**getAllTasks, getTaskById, createTask, updateTask, deleteTask*/ 
 
@@ -16,39 +17,50 @@ public class TaskService {
     @Autowired
     TaskRepository repository;
 
-    public Task getTaskById(Long id){
-        Task task = this.repository.findById(id).get();
-        if(task != null){
+    public Optional<Task> getTaskById(Long id){
+        
+        Optional<Task> task = this.repository.findById(id);
+        
+        if(task.isPresent()){
+            
             return task;
-        } 
+        
+        }
+        
         return null;
     }
     
-    public List<Task> getAllTasks(){
-        return this.repository.findAll(Sort.by("title").ascending().and(Sort.by("description").descending()));
-    }
-
-    public Task createTask(Task task){
-        Task t = this.repository.save(task);
+    public Optional<List<Task>> getAllTasks(){
         
-        if(t != null){
-            return t;
-        }
-
-        return null;
+        List<Task> listTask = this.repository.findAll(Sort.by("title").ascending().and(Sort.by("description").descending())); 
+       
+        return Optional.ofNullable(listTask);
     }
 
-    public Task updateTask(Long id , Task task){
-
-        return this.repository.save(task);
-    }
-
-    public Task deleteTask(Long id){
+    public Optional<Task> createTask(Task task){
         
-        Task task = this.getTaskById(id);
-        if(task != null){
-            this.repository.delete(task);
+        return Optional.ofNullable(this.repository.save(task));
+        
+    }
+
+    public Optional<Task> updateTask(Long id , Task task){
+
+        return Optional.ofNullable(this.repository.save(task));
+    
+    }
+
+    public Optional<Task> deleteTask(Long id){
+        
+        Optional<Task> task = this.getTaskById(id);
+        
+        if(task.isPresent()){
+        
+            Task deletedTask = task.get();
+            this.repository.deleteById(id); 
+            return Optional.of(deletedTask);
+            
         }
-        return task;
+        
+        return Optional.empty();
     }
 }
