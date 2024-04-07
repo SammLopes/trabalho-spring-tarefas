@@ -3,6 +3,7 @@ package br.task.task.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.task.task.model.Task;
 import br.task.task.services.TaskService;
+import java.util.Optional;
+import org.springframework.http.HttpStatus;
 
-@CrossOrigin 
+@CrossOrigin(origins="*") 
 @RestController
 @RequestMapping("gravar/tarefas")
 public class TaskController {
@@ -26,59 +29,98 @@ public class TaskController {
     TaskService service;
 
     @GetMapping("/task/{id}")
-    public Task getTaskById(@PathVariable Long id){
+    public ResponseEntity<Object> getTaskById(@PathVariable Long id){
         
-        Task task = service.getTaskById(id);
+        Optional<Task> task = service.getTaskById(id);
 
-        if(task == null){
-            return null;
+        if(task.isPresent()){
+        
+            return new ResponseEntity<>(task, HttpStatus.OK);
+            
+        }else{
+        
+            return ResponseEntity.status(HttpStatus.OK).body("Não existem tasks cadastradas");
+            
         }
-
-        return task;
 
     }
 
     @GetMapping("/tasks")
-    public List<Task> getAllTasks(){
-        return service.getAllTasks();
+    public ResponseEntity<Object> getAllTasks(){
+        
+        Optional<List<Task>> list = service.getAllTasks();
+        
+        if(list.isPresent()){
+        
+            return new ResponseEntity<>(list, HttpStatus.OK);
+                    
+        }else {
+        
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não existem professores cadastrados!!!");
+            
+        }
+        
     }
 
     @PostMapping("/task")
-    public Task createTask(/**@RequestParam Task createTask*/@RequestParam String title, @RequestParam String description, @RequestParam(required = false, defaultValue = "false") Boolean completed){
+    public ResponseEntity<Object> createTask(/**@RequestParam Task createTask*/@RequestParam String title, @RequestParam String description, @RequestParam(required = false, defaultValue = "false") Boolean completed){
         Task createTask = new Task();
         createTask.setTitle(title);
         createTask.setDescription(description);
-        createTask.setCompleted(completed);
+        createTask.setCompleted(completed);      
+       
+        Optional<Task> task = this.service.createTask(createTask);
         
-        Task t = this.service.createTask(createTask);
+        if(task.isPresent()){
         
-        if(t == null){
-            return null;
+            return new ResponseEntity<>(task, HttpStatus.OK);
+        
         }
 
-        return t;
+        return ResponseEntity.status(HttpStatus.FOUND).body("Já existe esta task criada");
     }
 
     @PutMapping("/task/{id}")
-    public Task updateTask(@PathVariable Long id, /**@RequestBody Task newTask*/@RequestParam String title, @RequestParam String description, @RequestParam(required = false, defaultValue = "false") Boolean completed){
+    public ResponseEntity<Object> updateTask(@PathVariable Long id, /**@RequestBody Task newTask*/@RequestParam String title, @RequestParam String description, @RequestParam(required = false, defaultValue = "false") Boolean completed){
         
-        if(this.getTaskById(id) != null){
-            //return this.getTaskById(id);
+        Optional<Task> task = service.getTaskById(id);
+        
+        if(!task.isPresent()){
             
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não fo encontrado esta tarefa!!");
+            
+        }else {
+            //return this.getTaskById(id);
+
             Task newTask = new Task();
             newTask.setId(id);
             newTask.setTitle(title);
             newTask.setDescription(description);
             newTask.setCompleted(completed);
-            return this.service.updateTask(id, newTask);
+
+            Optional<Task> t = this.service.updateTask(id, newTask);
+            
+            return new ResponseEntity<>(t, HttpStatus.OK);
         
         }
-
-        return null;
     }
 
     @DeleteMapping("task/{id}")
-    public Task deleteTask(@PathVariable Long id){
-        return this.service.deleteTask(id);
+    public ResponseEntity<Object> deleteTask(@PathVariable Long id){
+    
+        Optional<Task> task = this.service.getTaskById(id);
+        
+        if( task.isPresent() ){
+        
+            Optional<Task> _task = this.service.deleteTask(id);
+            
+            return new ResponseEntity<>(_task, HttpStatus.OK);
+            
+        }else{
+        
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tarefa não encontrada! ");
+            
+        }
+       
     }
 }
