@@ -27,14 +27,21 @@ public class TaskService {
         
         }
         
-        return null;
+        return Optional.empty();
     }
     
     public Optional<List<Task>> getAllTasks(){
         
         List<Task> listTask = this.repository.findAll(Sort.by("title").ascending().and(Sort.by("description").descending())); 
-       
-        return Optional.ofNullable(listTask);
+
+        if(listTask.isEmpty()){
+            
+            return Optional.empty();
+        
+        }
+        
+        return  Optional.of(listTask);
+    
     }
 
     public Optional<Task> createTask(Task task){
