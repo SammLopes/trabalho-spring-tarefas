@@ -37,9 +37,9 @@ public class TaskController {
         
             return new ResponseEntity<>(task, HttpStatus.OK);
             
-        }else{
+        } else {
         
-            return ResponseEntity.status(HttpStatus.OK).body("Não existem tasks cadastradas");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esta tarefa não esta cadastrada!");
             
         }
 
@@ -64,6 +64,7 @@ public class TaskController {
 
     @PostMapping("/task")
     public ResponseEntity<Object> createTask(/**@RequestParam Task createTask*/@RequestParam String title, @RequestParam String description, @RequestParam(required = false, defaultValue = "false") Boolean completed){
+        
         Task createTask = new Task();
         createTask.setTitle(title);
         createTask.setDescription(description);
@@ -73,11 +74,14 @@ public class TaskController {
         
         if(task.isPresent()){
         
-            return new ResponseEntity<>(task, HttpStatus.OK);
+            return ResponseEntity.ok("Tarefa Criada com sucesso");
+        
+        }else{
+            
+            return ResponseEntity.status(HttpStatus.FOUND).body("Já existe esta task criada");
         
         }
-
-        return ResponseEntity.status(HttpStatus.FOUND).body("Já existe esta task criada");
+        
     }
 
     @PutMapping("/task/{id}")
@@ -87,7 +91,7 @@ public class TaskController {
         
         if(!task.isPresent()){
             
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não fo encontrado esta tarefa!!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi encontrado esta tarefa!!");
             
         }else {
             //return this.getTaskById(id);
@@ -100,7 +104,7 @@ public class TaskController {
 
             Optional<Task> t = this.service.updateTask(id, newTask);
             
-            return new ResponseEntity<>(t, HttpStatus.OK);
+            return ResponseEntity.ok("Tarefa atualizada com sucesso!");
         
         }
     }
@@ -112,9 +116,9 @@ public class TaskController {
         
         if( task.isPresent() ){
         
-            Optional<Task> _task = this.service.deleteTask(id);
+            this.service.deleteTask(id);
             
-            return new ResponseEntity<>(_task, HttpStatus.OK);
+            return ResponseEntity.ok("Tarefa deletada com sucesso!");
             
         }else{
         
